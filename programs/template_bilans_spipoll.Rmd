@@ -1,0 +1,222 @@
+---
+params:
+   new_title: "My Title!"
+title: "`r params$new_title`"
+author: "Charles Thévenin - Vigie-Nature"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, 
+                      cache = FALSE,
+                      message = FALSE, 
+                      warning = FALSE)
+```
+
+# Chiffres clés {.tabset .tabset-pills}
+
+## Synthèse participation
+
+Synthèse de la participation au Spipoll par année :
+
+-   **Année** : année
+
+-   **Nombre participants** : nombre de participants actifs sur l'année
+
+-   **Total collections** : cumul total du nombre de collections
+
+-   **Nouveaux participants** : nombre de nouveaux participants (un participant est considéré comme "nouveau" sur la base de l'année de première participation)
+
+-   **Nombre médian collections** : nombre médian de collections par participant
+
+-   **Participations uniques** : le nombre de jardin qui n'ont participé qu'une seule fois au cours de l'année
+
+-   **Gros participants** : le nombre de "gros" participants, à savoir le nombre de participants qui ont fait plus de 40 collections dans l'année (je peux modifier la valeur seuil)
+
+```{r synthese_participation}
+DT::datatable(stats_participation %>%
+                arrange(desc(annee)),
+              rownames = FALSE,
+              colnames = c("Année", "Nombre\nparticipants",
+                           "Total\ncollections","Nouveaux\nparticipants", "Nombre médian\ncollections",
+                           "Participations\nuniques", "Gros\nparticipants"),
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(stats_participation)-1)))))
+```
+
+<br>
+
+## Synthèse communauté
+
+Synthèse de l'activité de la communauté des Spipollien.nes par année :
+
+-   **Année** : année
+
+-   **Identifications validées** : total des identifications validées par année
+
+-   **Identifications non validées** : total des identifications non validées par année
+
+-   **Total validations** : total des validations effectuées par les participants par année
+
+-   **Total suggestions** : total des suggestions d'identification effectuées par les participants par année
+
+-   **Nombre commentaires** : nombre de commentaires postés sur le site par année
+
+-   **Nombre valideurs** : nombre de participants ayant participé à la validation des identifications
+
+```{r synthese_communaute}
+DT::datatable(stats_communaute %>%
+                arrange(desc(annee)),
+              rownames = FALSE,
+              colnames = c("Année", "Identifications\nvalidées", "Identifications\nnon validées",
+                           "Total\nvalidations", "Total\nsuggestions", "Nombre\ncommentaires", "Nombre\nvalideurs"),
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(stats_communaute)-1)))))
+```
+
+<br>
+
+## Synthèse observations
+
+Synthèses des observations par année :
+
+-   **Année** : année
+
+-   **Nombre d'interactions** : total des interactions plante-pollinisateur observées chaque année
+
+-   **Nombre plantes** : total d'espèces de plantes échantillonnées par année
+
+-   **Nombre photos** : total de photos uploadées sur le site
+
+-   **Photos taxons terminaux** : total de photos concernant uniquement des taxons terminaux dans la liste des taxons du Spipoll
+
+-   **Diversité moyenne** : diversité moyenne sur l'ensemble des collections de l'année. La statistique toute seule n'a pas forcément d'inérêt, plutôt aller regarder les représentations graphiques de la variation sur l'année
+
+```{r synthese_observations}
+DT::datatable(stats_observation %>%
+                arrange(desc(annee)),
+              rownames = FALSE,
+              colnames = c("Année", "Nombre\nd'interactions", "Nombre\nplantes", "Nombre\nphotos", "Photos taxons\nterminaux", "Diversité\nmoyenne"),
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(stats_observation)-1)))))
+```
+
+<br>
+
+## Top espèces par année
+
+Ce tableau fournit, pour chaque année, le nombre total d'observations par taxon
+
+```{r tot_especes}
+DT::datatable(obs_taxons_annees,
+              rownames = FALSE,
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(obs_taxons_annees)-1)))))
+```
+
+<!-- <br> -->
+
+<!-- Ce tableau fournit, pour chaque année, le rang de chaque espèce selon un classement décroissant du total d'observations. Cela permet de retrouver facilement les top 5 des espèces les plus (ou moins) vues, ainsi que les rangs ex aequo s'il y en a. -->
+
+<!-- ```{r rangs_especes} -->
+
+<!-- DT::datatable(rangs_taxons_annees, -->
+
+<!--               rownames = FALSE, -->
+
+<!--               options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(rangs_taxons_annees)-1))))) -->
+
+<!-- ``` -->
+
+<br>
+
+## Top grands groupes taxo par année
+
+Ce tableau fournit, pour chaque année, le nombre total d'observations par grand groupe taxonomique
+
+```{r tot_taxons}
+DT::datatable(obs_groupes_annees,
+              rownames = FALSE,
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(obs_groupes_annees)-1)))))
+```
+
+<br>
+
+Ce tableau fournit, pour chaque année, le pourcentage du total des observations pour chaque grand groupe taxonomique.
+
+```{r pourcents_taxons}
+DT::datatable(pourcents_groupes_annees,
+              rownames = FALSE,
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(pourcents_groupes_annees)-1)))))
+```
+
+<br>
+
+Ce tableau fournit, pour chaque année, le rang de chaque grand groupe taxonomique selon un classement décroissant du total d'observations.
+
+```{r rangs_taxons}
+DT::datatable(rangs_groupes_annees,
+              rownames = FALSE,
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(rangs_groupes_annees)-1)))))
+```
+
+<br>
+
+## Mentions Spéciales
+
+Ce tableau fournit la liste des collections un peu "spéciales" : la plus diversifiée, la plus haute, la plus basse... A chaque fois j'ai mis la date et le pseudo du participant afin de retrouver facilement la collection sur le site via le moteur de recherche.
+C'est utile notamment pour les collections les plus basses qui sont souvent en bord de mer et pour lesquelles on peut avoir une altitude négative (moyenne sur une maille de couche SIG).
+
+Vous pouvez interagir avec les colonnes du tableau pour classer les collections en fontion de la variable d'intérêt. A noter qu'il peut y avoir des égalité pour certains champs (ex : deux collections à la même altitude...)
+
+```{r mentions_speciales}
+DT::datatable(mentions_speciales,
+              rownames = FALSE,
+              colnames = c("Nom\ncollection", 
+                           "Date\ncollection",
+                           "Pseudo\nparticipant", "Altitude (m)",
+                           "Nombre de\npollinisateurs"),
+              options = list(columnDefs = list(list(className = 'dt-center', targets = 0:(ncol(mentions_speciales)-1)))))
+```
+
+<br>
+
+# Datavisualisation {.tabset .tabset-pills}
+
+<br>
+
+## Carte simplifiée des collections
+
+```{r carto_simple}
+print(carte_collections)
+```
+
+<br>
+
+## Participations/mois
+
+```{r plot_participation}
+print(plot_participation_mensuelle)
+```
+
+<br>
+
+## Diversité/mois
+
+Variation mensuelle de la diversite de taxons observés par collection pour l'année `r annee_bilan`
+
+```{r plot_diversite_mensuelle}
+print(plot_diversite_mensuelle)
+```
+
+<br>
+
+## Grands groupes/mois
+
+Variation mensuelle du pourcentage des observations entre Diptères, Hyménoptères et Autres pour l'année `r annee_bilan`
+
+```{r plot_taxo_mensuel}
+print(plot_taxo_mensuel)
+```
+
+<br>
